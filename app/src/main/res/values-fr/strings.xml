@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Coffee Master Pro</string>
+    <string name="reports">Rapports financiers</string>
+    <string name="export">Exporter</string>
+    <string name="cancel">Annuler</string>
+</resources>

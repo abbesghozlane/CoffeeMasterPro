@@ -1,0 +1,2 @@
+-keep class kotlin.Metadata { *; }
+-keepclassmembers class * { @kotlin.Metadata *; }
