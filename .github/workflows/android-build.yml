@@ -60,8 +60,9 @@ jobs:
         run: |
           cd "$PROJECT_ROOT"
           if [ ! -f ./gradle/wrapper/gradle-wrapper.jar ]; then
-            gradle --version
+            echo "Gradle (downloaded) version:" && gradle --version
             gradle wrapper --gradle-version 8.6
+            echo "Generated wrapper with gradle-wrapper.properties:" && cat gradle/wrapper/gradle-wrapper.properties || true
           else
             echo "gradle-wrapper.jar already present"
           fi
@@ -79,7 +80,16 @@ jobs:
         run: |
           cd "$PROJECT_ROOT"
           chmod +x ./gradlew || true
-          ./gradlew assembleDebug --no-daemon
+          # run with full warnings and stacktrace to capture deprecated API usage
+          ./gradlew assembleDebug --no-daemon --warning-mode all --stacktrace 2>&1 | tee build-output.txt
+
+      - name: Upload build logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            ${{ github.workspace }}/$PROJECT_ROOT/build-output.txt
+            ${{ github.workspace }}/$PROJECT_ROOT/build/reports/**
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
