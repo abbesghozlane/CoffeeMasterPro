@@ -1,23 +1,4 @@
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-}
-
-dependencyResolutionManagement {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-rootProject.name = "CoffeeMasterPro"
-include(":app")
-import org.gradle.api.initialization.dsl.RepositoriesMode
-
-pluginManagement {
 	repositories {
 		gradlePluginPortal()
 		google()
@@ -26,7 +7,6 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-	repositoriesMode.set(org.gradle.api.initialization.dsl.RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 	repositories {
 		google()
 		mavenCentral()
