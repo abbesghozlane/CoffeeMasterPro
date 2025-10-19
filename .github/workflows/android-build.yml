@@ -33,8 +33,27 @@ jobs:
           source "$HOME/.sdkman/bin/sdkman-init.sh"
           sdk install gradle 8.6
 
+      - name: Detect project root (where settings.gradle.kts lives)
+        shell: bash
+        run: |
+          echo "Detecting project root..."
+          if [ -f ./settings.gradle.kts ]; then
+            echo "PROJECT_ROOT=." >> $GITHUB_ENV
+            echo "Found settings.gradle.kts at repo root"
+          else
+            dir=$(git ls-files | grep -m1 'settings.gradle.kts' | xargs dirname || true)
+            if [ -z "$dir" ]; then
+              echo "PROJECT_ROOT=." >> $GITHUB_ENV
+              echo "No settings.gradle.kts found; defaulting to repo root"
+            else
+              echo "PROJECT_ROOT=$dir" >> $GITHUB_ENV
+              echo "Found settings.gradle.kts in $dir"
+            fi
+          fi
+
       - name: Generate Gradle wrapper (if missing)
         run: |
+          cd "$PROJECT_ROOT"
           if [ ! -f ./gradle/wrapper/gradle-wrapper.jar ]; then
             gradle --version
             gradle wrapper --gradle-version 8.6
@@ -53,6 +72,7 @@ jobs:
 
       - name: Build APK (assembleDebug)
         run: |
+          cd "$PROJECT_ROOT"
           chmod +x ./gradlew || true
           ./gradlew assembleDebug --no-daemon
 
