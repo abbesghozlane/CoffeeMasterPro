@@ -83,16 +83,33 @@ jobs:
           # run with full warnings and stacktrace to capture deprecated API usage
           ./gradlew assembleDebug --no-daemon --warning-mode all --stacktrace 2>&1 | tee build-output.txt
 
+      - name: Collect artifacts into workspace root
+        run: |
+          echo "Copying artifacts to workspace root for upload..."
+          # copy build output log if present
+          if [ -f "$PROJECT_ROOT/build-output.txt" ]; then
+            cp "$PROJECT_ROOT/build-output.txt" "$GITHUB_WORKSPACE/build-output.txt" || true
+          fi
+          # copy build reports if present
+          mkdir -p "$GITHUB_WORKSPACE/build-reports" || true
+          if [ -d "$PROJECT_ROOT/build/reports" ]; then
+            cp -r "$PROJECT_ROOT/build/reports/." "$GITHUB_WORKSPACE/build-reports/" || true
+          fi
+          # copy APK if present
+          if [ -f "$PROJECT_ROOT/app/build/outputs/apk/debug/app-debug.apk" ]; then
+            cp "$PROJECT_ROOT/app/build/outputs/apk/debug/app-debug.apk" "$GITHUB_WORKSPACE/app-debug.apk" || true
+          fi
+
       - name: Upload build logs
         uses: actions/upload-artifact@v4
         with:
           name: build-logs
           path: |
-            ${{ github.workspace }}/$PROJECT_ROOT/build-output.txt
-            ${{ github.workspace }}/$PROJECT_ROOT/build/reports/**
+            build-output.txt
+            build-reports/**
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app-debug.apk
