@@ -32,6 +32,8 @@ jobs:
           curl -s "https://get.sdkman.io" | bash
           source "$HOME/.sdkman/bin/sdkman-init.sh"
           sdk install gradle 8.6
+          sdk use gradle 8.6
+          echo "Using gradle:" && gradle --version
 
       - name: Detect project root (where settings.gradle.kts lives)
         shell: bash
