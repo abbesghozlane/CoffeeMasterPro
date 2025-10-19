@@ -95,9 +95,13 @@ jobs:
           if [ -d "$PROJECT_ROOT/build/reports" ]; then
             cp -r "$PROJECT_ROOT/build/reports/." "$GITHUB_WORKSPACE/build-reports/" || true
           fi
-          # copy APK if present
-          if [ -f "$PROJECT_ROOT/app/build/outputs/apk/debug/app-debug.apk" ]; then
-            cp "$PROJECT_ROOT/app/build/outputs/apk/debug/app-debug.apk" "$GITHUB_WORKSPACE/app-debug.apk" || true
+          # find any APK produced anywhere under the project and copy the first one found
+          apk_path=$(find "$PROJECT_ROOT" -type f -name "*.apk" -print -quit || true)
+          if [ -n "$apk_path" ]; then
+            echo "Found APK: $apk_path"
+            cp "$apk_path" "$GITHUB_WORKSPACE/app-debug.apk" || true
+          else
+            echo "No APK files found under $PROJECT_ROOT"
           fi
 
       - name: Upload build logs
