@@ -26,13 +26,16 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y unzip wget curl zip
 
-      - name: Install sdkman and Gradle 8.6
+      - name: Download and use Gradle 8.6
         shell: bash
         run: |
-          curl -s "https://get.sdkman.io" | bash
-          source "$HOME/.sdkman/bin/sdkman-init.sh"
-          sdk install gradle 8.6
-          sdk use gradle 8.6
+          set -e
+          echo "Downloading Gradle 8.6..."
+          wget -q https://services.gradle.org/distributions/gradle-8.6-bin.zip -O gradle-8.6-bin.zip
+          echo "Extracting..."
+          unzip -q gradle-8.6-bin.zip -d gradle-8.6
+          export GRADLE_HOME="$PWD/gradle-8.6/gradle-8.6"
+          export PATH="$GRADLE_HOME/bin:$PATH"
           echo "Using gradle:" && gradle --version
 
       - name: Detect project root (where settings.gradle.kts lives)
